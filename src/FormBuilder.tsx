@@ -38,7 +38,6 @@ const FormBuilder: React.FC = () => {
                     />
                 </div>
             </div>
-            <div>Note: Choose option from the list is not supported yet</div>
             <AddFieldRow />
             <FormCode />
         </div>

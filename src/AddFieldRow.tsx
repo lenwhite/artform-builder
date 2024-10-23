@@ -3,10 +3,10 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { useFormBuilderStore, Field } from './store';
 
 const fieldTypeMapping: Record<string, Field['type']> = {
-    'Enter number': 'number_input',
     'Enter text': 'string_input',
     'Enter text (multiple lines)': 'string_textarea',
-    'Choose option from list': 'string_picker',
+    'Choose option from list': 'string_radio',
+    'Enter number': 'number_input',
     'Choose yes or no': 'boolean_radio',
     Checkboxes: 'checkbox',
     'Enter date': 'date',
@@ -19,7 +19,7 @@ type FormValues = {
     title: string;
     helpText: string;
     fieldType: Field['type'];
-    options: { value: string }[];
+    options: string;
 };
 
 export const AddFieldRow = () => {
@@ -33,14 +33,13 @@ export const AddFieldRow = () => {
         handleSubmit,
         formState: { errors },
         reset,
-        control,
     } = useForm<FormValues>({
         defaultValues: {
             title: '',
             helpText: '',
             fieldType: 'string_input',
             required: 'true',
-            options: [],
+            options: 'Option 1, Option 2',
         },
     });
 
@@ -57,15 +56,14 @@ export const AddFieldRow = () => {
             field.enum = ['Yes', 'No'];
             field.enumNames = ['Yes', 'No'];
         }
+        if (data.fieldType === 'string_radio') {
+            field.enum = data.options.split(',').map((option) => option.trim());
+            field.enumNames = field.enum as string[];
+        }
         addField(field);
         // Reset form state
         reset();
     };
-
-    const optionFieldArray = useFieldArray({
-        control,
-        name: 'options',
-    });
 
     return (
         <form
@@ -77,7 +75,6 @@ export const AddFieldRow = () => {
                 <input
                     className="input"
                     type="text"
-                    placeholder="Title"
                     {...register('title', { required: true })}
                 />
                 {errors.title && <p className="error">Title is required</p>}
@@ -87,7 +84,6 @@ export const AddFieldRow = () => {
                 <input
                     className="input"
                     type="text"
-                    placeholder="Help Text"
                     {...register('helpText')}
                 />
             </div>
@@ -103,6 +99,20 @@ export const AddFieldRow = () => {
                     </select>
                 </div>
             </div>
+            {watch('fieldType') === 'string_radio' && (
+                <div className="control">
+                    <label className="label">Options (comma separated)</label>
+                    <input
+                        className="input"
+                        type="text"
+                        placeholder="Options"
+                        {...register('options', { required: true })}
+                    />
+                    {errors.options && (
+                        <p className="error">Options are required</p>
+                    )}
+                </div>
+            )}
             <div className="control">
                 <label className="label">Required</label>
                 <div className="select">
@@ -120,32 +130,6 @@ export const AddFieldRow = () => {
                     Add Field
                 </button>
             </div>
-            {false &&
-                watch() &&
-                optionFieldArray.fields.map((field, index) => (
-                    <div
-                        key={field.id}
-                        className="field is-grouped is-grouped-multiline"
-                    >
-                        <div className="control">
-                            <input
-                                className="input"
-                                type="text"
-                                placeholder="Option"
-                                {...register(`options.${index}.value` as const)}
-                            />
-                        </div>
-                        <div className="control">
-                            <button
-                                className="button is-danger"
-                                type="button"
-                                onClick={() => optionFieldArray.remove(index)}
-                            >
-                                Remove
-                            </button>
-                        </div>
-                    </div>
-                ))}
         </form>
     );
 };
