@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useFormBuilderStore, Field } from './store';
 
 const fieldTypeMapping: Record<string, Field['type']> = {
@@ -7,7 +7,6 @@ const fieldTypeMapping: Record<string, Field['type']> = {
     'Enter text': 'string_input',
     'Enter text (multiple lines)': 'string_textarea',
     'Choose option from list': 'string_picker',
-    'Choose number from list': 'string_radio',
     'Choose yes or no': 'boolean_radio',
     Checkboxes: 'checkbox',
     'Enter date': 'date',
@@ -20,6 +19,7 @@ type FormValues = {
     title: string;
     helpText: string;
     fieldType: Field['type'];
+    options: { value: string }[];
 };
 
 export const AddFieldRow = () => {
@@ -28,29 +28,44 @@ export const AddFieldRow = () => {
     const fieldLength = useFormBuilderStore((state) => state.fields.length);
 
     const {
+        watch,
         register,
         handleSubmit,
         formState: { errors },
+        reset,
+        control,
     } = useForm<FormValues>({
         defaultValues: {
             title: '',
             helpText: '',
             fieldType: 'string_input',
             required: 'true',
+            options: [],
         },
     });
 
     const onSubmit = (data: FormValues) => {
-        addField({
+        const field: Field = {
             order: fieldLength + 1,
             title: data.title,
             helpText: data.helpText,
             type: data.fieldType,
             required: data.required === 'true',
             default: null,
-        });
+        };
+        if (data.fieldType === 'boolean_radio') {
+            field.enum = ['Yes', 'No'];
+            field.enumNames = ['Yes', 'No'];
+        }
+        addField(field);
         // Reset form state
+        reset();
     };
+
+    const optionFieldArray = useFieldArray({
+        control,
+        name: 'options',
+    });
 
     return (
         <form
@@ -105,6 +120,32 @@ export const AddFieldRow = () => {
                     Add Field
                 </button>
             </div>
+            {false &&
+                watch() &&
+                optionFieldArray.fields.map((field, index) => (
+                    <div
+                        key={field.id}
+                        className="field is-grouped is-grouped-multiline"
+                    >
+                        <div className="control">
+                            <input
+                                className="input"
+                                type="text"
+                                placeholder="Option"
+                                {...register(`options.${index}.value` as const)}
+                            />
+                        </div>
+                        <div className="control">
+                            <button
+                                className="button is-danger"
+                                type="button"
+                                onClick={() => optionFieldArray.remove(index)}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                ))}
         </form>
     );
 };
