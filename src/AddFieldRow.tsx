@@ -1,124 +1,104 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 import { useFormBuilderStore, Field } from './store';
 
-const fieldTypes = [
-    'string_input',
-    'string_textarea',
-    'string_picker',
-    'string_radio',
-    'date',
-    'email',
-    'url',
-    'checkbox',
-    'boolean_radio',
-    'number_input',
-] as const;
+const fieldTypeMapping: Record<string, Field['type']> = {
+    'Enter number': 'number_input',
+    'Enter text': 'string_input',
+    'Enter text (multiple lines)': 'string_textarea',
+    'Choose option from list': 'string_picker',
+    'Choose number from list': 'string_radio',
+    'Choose yes or no': 'boolean_radio',
+    Checkboxes: 'checkbox',
+    'Enter date': 'date',
+    'Take a picture': 'camera_upload',
+    'Upload a file': 'file_upload',
+};
 
-type FieldType = (typeof fieldTypes)[number];
+type FormValues = {
+    required: string;
+    title: string;
+    helpText: string;
+    fieldType: Field['type'];
+};
 
 export const AddFieldRow = () => {
     const store = useFormBuilderStore();
     const { addField } = store;
+    const fieldLength = useFormBuilderStore((state) => state.fields.length);
 
-    const [fieldType, setFieldType] = useState<FieldType>('string_input');
-    const [title, setTitle] = useState<string>('');
-    const [defaultValue, setDefaultValue] = useState<string | number | boolean>(
-        ''
-    );
-    const [required, setRequired] = useState<boolean>(false);
-    const [order, setOrder] = useState<number>(0);
-    const [helpText, setHelpText] = useState<string>('');
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormValues>({
+        defaultValues: {
+            title: '',
+            helpText: '',
+            fieldType: 'string_input',
+            required: 'true',
+        },
+    });
 
-    const handleAddField = (e: React.FormEvent) => {
-        e.preventDefault();
-        const newField: Field = {
-            type: fieldType,
-            title,
-            default: defaultValue,
-            required,
-            order,
-            helpText,
-        };
-        addField(newField);
+    const onSubmit = (data: FormValues) => {
+        addField({
+            order: fieldLength + 1,
+            title: data.title,
+            helpText: data.helpText,
+            type: data.fieldType,
+            required: data.required === 'true',
+            default: null,
+        });
+        // Reset form state
     };
 
     return (
         <form
-            onSubmit={handleAddField}
+            onSubmit={handleSubmit(onSubmit)}
             className="field is-grouped is-grouped-multiline"
         >
             <div className="control">
-                <label className="label">Field Type</label>
+                <label className="label">Question</label>
+                <input
+                    className="input"
+                    type="text"
+                    placeholder="Title"
+                    {...register('title', { required: true })}
+                />
+                {errors.title && <p className="error">Title is required</p>}
+            </div>
+            <div className="control">
+                <label className="label">Help text</label>
+                <input
+                    className="input"
+                    type="text"
+                    placeholder="Help Text"
+                    {...register('helpText')}
+                />
+            </div>
+            <div className="control">
+                <label className="label">Answer type</label>
                 <div className="select">
-                    <select
-                        value={fieldType}
-                        onChange={(e) =>
-                            setFieldType(e.target.value as FieldType)
-                        }
-                    >
-                        {fieldTypes.map((type) => (
-                            <option key={type} value={type}>
-                                {type}
+                    <select {...register('fieldType')}>
+                        {Object.keys(fieldTypeMapping).map((key) => (
+                            <option key={key} value={fieldTypeMapping[key]}>
+                                {key}
                             </option>
                         ))}
                     </select>
                 </div>
             </div>
             <div className="control">
-                <label className="label">Title</label>
-                <input
-                    className="input"
-                    type="text"
-                    placeholder="Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                />
-            </div>
-            <div className="control">
-                <label className="label">Default Value</label>
-                <input
-                    className="input"
-                    type="text"
-                    placeholder="Default Value"
-                    value={defaultValue.toString()}
-                    onChange={(e) => setDefaultValue(e.target.value)}
-                />
-            </div>
-            <div className="control">
                 <label className="label">Required</label>
                 <div className="select">
-                    <select
-                        value={required ? 'true' : 'false'}
-                        onChange={(e) => setRequired(e.target.value === 'true')}
-                    >
+                    <select {...register('required')}>
                         <option value="true">Yes</option>
                         <option value="false">No</option>
                     </select>
                 </div>
             </div>
-            <div className="control">
-                <label className="label">Order</label>
-                <input
-                    className="input"
-                    type="number"
-                    placeholder="Order"
-                    value={order}
-                    onChange={(e) => setOrder(Number(e.target.value))}
-                />
-            </div>
-            <div className="control">
-                <label className="label">Help Text</label>
-                <input
-                    className="input"
-                    type="text"
-                    placeholder="Help Text"
-                    value={helpText}
-                    onChange={(e) => setHelpText(e.target.value)}
-                />
-            </div>
             <div
-                className="control is-expanded has-text-centered"
+                className="control has-text-centered"
                 style={{ alignSelf: 'flex-end' }}
             >
                 <button className="button is-primary" type="submit">

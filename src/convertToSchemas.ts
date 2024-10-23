@@ -17,12 +17,10 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
 
     // Create the ui:order array to maintain the order in ui_schema
 
-    uiSchema['ui:order'] = sortedFields.map((field) =>
-        field.title.replace(/\s+/g, '_').toLowerCase()
-    );
+    uiSchema['ui:order'] = sortedFields.map((field) => field.order.toString());
 
     store.fields.forEach((field) => {
-        const fieldName = field.title.replace(/\s+/g, '_').toLowerCase();
+        const fieldName = field.order.toString();
 
         let fieldSchema;
         let uiFieldSchema = {};
@@ -32,7 +30,6 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
                 fieldSchema = {
                     title: field.title,
                     type: 'string',
-                    default: field.default,
                 };
                 break;
 
@@ -40,7 +37,6 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
                 fieldSchema = {
                     title: field.title,
                     type: 'string',
-                    default: field.default,
                 };
                 uiFieldSchema = { 'ui:widget': 'textarea' };
                 break;
@@ -89,7 +85,6 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
                 fieldSchema = {
                     title: field.title,
                     type: 'boolean',
-                    default: field.default,
                 };
                 break;
 
@@ -97,7 +92,6 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
                 fieldSchema = {
                     title: field.title,
                     type: 'boolean',
-                    default: field.default,
                 };
                 uiFieldSchema = { 'ui:widget': 'radio' };
                 break;
@@ -106,8 +100,23 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
                 fieldSchema = {
                     title: field.title,
                     type: 'integer',
-                    default: field.default,
                 };
+                break;
+
+            case 'camera_upload':
+                fieldSchema = {
+                    title: field.title,
+                    type: 'camera',
+                };
+                uiFieldSchema = { 'ui:widget': 'camera' };
+                break;
+
+            case 'file_upload':
+                fieldSchema = {
+                    title: field.title,
+                    type: 'file',
+                };
+                uiFieldSchema = { 'ui:widget': 'file' };
                 break;
 
             default:

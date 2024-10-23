@@ -1,7 +1,6 @@
 import React from 'react';
 import { useFormBuilderStore } from './store';
 import AddFieldRow from './AddFieldRow';
-import { convertStoreToSchemas } from './convertToSchemas';
 import { FormCode } from './FormCode';
 
 const FormBuilder: React.FC = () => {
@@ -9,8 +8,6 @@ const FormBuilder: React.FC = () => {
 
     const { formTitle, setFormTitle, formDescription, setFormDescription } =
         store;
-
-    const { fieldsSchema, uiSchema } = convertStoreToSchemas(store);
 
     return (
         <div className="container">
@@ -43,9 +40,6 @@ const FormBuilder: React.FC = () => {
             </div>
             <AddFieldRow />
             <FormCode />
-            <pre>{JSON.stringify(store, null, 2)}</pre>
-            <pre>{JSON.stringify(fieldsSchema, null, 2)}</pre>
-            <pre>{JSON.stringify(uiSchema, null, 2)}</pre>
         </div>
     );
 };
