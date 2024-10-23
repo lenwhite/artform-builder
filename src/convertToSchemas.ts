@@ -84,7 +84,11 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
             case 'checkbox':
                 fieldSchema = {
                     title: field.title,
-                    type: 'boolean',
+                    type: 'array',
+                    items: {
+                        enum: field.enum,
+                        type: 'string',
+                    },
                 };
                 break;
 

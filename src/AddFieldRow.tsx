@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useFormBuilderStore, Field } from './store';
 
 const fieldTypeMapping: Record<string, Field['type']> = {
@@ -56,7 +56,10 @@ export const AddFieldRow = () => {
             field.enum = ['Yes', 'No'];
             field.enumNames = ['Yes', 'No'];
         }
-        if (data.fieldType === 'string_radio') {
+        if (
+            data.fieldType === 'string_radio' ||
+            data.fieldType === 'checkbox'
+        ) {
             field.enum = data.options.split(',').map((option) => option.trim());
             field.enumNames = field.enum as string[];
         }
@@ -99,20 +102,23 @@ export const AddFieldRow = () => {
                     </select>
                 </div>
             </div>
-            {watch('fieldType') === 'string_radio' && (
-                <div className="control">
-                    <label className="label">Options (comma separated)</label>
-                    <input
-                        className="input"
-                        type="text"
-                        placeholder="Options"
-                        {...register('options', { required: true })}
-                    />
-                    {errors.options && (
-                        <p className="error">Options are required</p>
-                    )}
-                </div>
-            )}
+            {watch('fieldType') === 'string_radio' ||
+                (watch('fieldType') === 'checkbox' && (
+                    <div className="control">
+                        <label className="label">
+                            Options (comma separated)
+                        </label>
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Options"
+                            {...register('options', { required: true })}
+                        />
+                        {errors.options && (
+                            <p className="error">Options are required</p>
+                        )}
+                    </div>
+                ))}
             <div className="control">
                 <label className="label">Required</label>
                 <div className="select">
