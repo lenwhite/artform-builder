@@ -2,6 +2,7 @@ import React from 'react';
 import { useFormBuilderStore } from './store';
 import AddFieldRow from './AddFieldRow';
 import { FormCode } from './FormCode';
+import FieldsPreview from './FieldsPreview';
 
 const FormBuilder: React.FC = () => {
     const store = useFormBuilderStore();
@@ -38,6 +39,7 @@ const FormBuilder: React.FC = () => {
                     />
                 </div>
             </div>
+            <FieldsPreview />
             <AddFieldRow />
             <FormCode />
         </div>

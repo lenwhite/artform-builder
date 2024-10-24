@@ -41,7 +41,6 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
                 uiFieldSchema = { 'ui:widget': 'textarea' };
                 break;
 
-            case 'string_picker':
             case 'string_radio':
                 fieldSchema = {
                     title: field.title,

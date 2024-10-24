@@ -68,13 +68,15 @@ export const AddFieldRow = () => {
         reset();
     };
 
+    const fieldType = watch('fieldType');
+
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
             className="field is-grouped is-grouped-multiline"
         >
             <div className="control">
-                <label className="label">Question</label>
+                <label className="label">Question title</label>
                 <input
                     className="input"
                     type="text"
@@ -102,23 +104,20 @@ export const AddFieldRow = () => {
                     </select>
                 </div>
             </div>
-            {watch('fieldType') === 'string_radio' ||
-                (watch('fieldType') === 'checkbox' && (
-                    <div className="control">
-                        <label className="label">
-                            Options (comma separated)
-                        </label>
-                        <input
-                            className="input"
-                            type="text"
-                            placeholder="Options"
-                            {...register('options', { required: true })}
-                        />
-                        {errors.options && (
-                            <p className="error">Options are required</p>
-                        )}
-                    </div>
-                ))}
+            {(fieldType === 'string_radio' || fieldType === 'checkbox') && (
+                <div className="control">
+                    <label className="label">Options (comma separated)</label>
+                    <input
+                        className="input"
+                        type="text"
+                        placeholder="Options"
+                        {...register('options', { required: true })}
+                    />
+                    {errors.options && (
+                        <p className="error">Options are required</p>
+                    )}
+                </div>
+            )}
             <div className="control">
                 <label className="label">Required</label>
                 <div className="select">

@@ -5,7 +5,6 @@ export type Field = {
     type:
         | 'string_input'
         | 'string_textarea'
-        | 'string_picker'
         | 'string_radio'
         | 'date'
         | 'email'
@@ -32,6 +31,7 @@ export type FormBuilderStore = {
     setFormDescription: (description: string) => void;
     addField: (field: Field) => void;
     removeField: (fieldIndex: number) => void;
+    moveField: (fromIndex: number, toIndex: number) => void;
 };
 
 export const useFormBuilderStore = create<FormBuilderStore>()((set) => ({
@@ -46,4 +46,11 @@ export const useFormBuilderStore = create<FormBuilderStore>()((set) => ({
         set((state) => ({
             fields: state.fields.filter((_, index) => index !== fieldIndex),
         })),
+    moveField: (fromIndex, toIndex) =>
+        set((state) => {
+            const fields = [...state.fields];
+            const [field] = fields.splice(fromIndex, 1);
+            fields.splice(toIndex, 0, field);
+            return { fields };
+        }),
 }));
