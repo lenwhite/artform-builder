@@ -76,7 +76,7 @@ const FieldPreview = ({
                 {field.type === 'string_radio' &&
                     field.enum &&
                     field.enum.map((option, index) => (
-                        <label className="radio mr-6" key={index}>
+                        <label className="radio mr-6" key={field.title + index}>
                             <input
                                 type="radio"
                                 value={option}

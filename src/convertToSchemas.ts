@@ -23,7 +23,7 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
         const fieldName = field.order.toString();
 
         let fieldSchema;
-        let uiFieldSchema = {};
+        let uiFieldSchema: Record<string, string> = {};
 
         switch (field.type) {
             case 'string_input':
@@ -125,6 +125,9 @@ export function convertStoreToSchemas(store: FormBuilderStore) {
             default:
                 throw new Error(`Unsupported field type: ${field.type}`);
         }
+
+        if (field.description)
+            uiFieldSchema['ui:description'] = field.description;
 
         if (field.required) {
             fieldsSchema.required.push(fieldName);

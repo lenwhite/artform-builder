@@ -20,6 +20,7 @@ type FormValues = {
     helpText: string;
     fieldType: Field['type'];
     options: string;
+    description: string;
 };
 
 export const AddFieldRow = () => {
@@ -40,6 +41,7 @@ export const AddFieldRow = () => {
             fieldType: 'string_input',
             required: 'true',
             options: 'Option 1, Option 2',
+            description: '',
         },
     });
 
@@ -50,6 +52,7 @@ export const AddFieldRow = () => {
             helpText: data.helpText,
             type: data.fieldType,
             required: data.required === 'true',
+            description: data.description,
             default: null,
         };
         if (data.fieldType === 'boolean_radio') {
@@ -71,69 +74,74 @@ export const AddFieldRow = () => {
     const fieldType = watch('fieldType');
 
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="field is-grouped is-grouped-multiline"
-        >
-            <div className="control">
-                <label className="label">Question title</label>
-                <input
-                    className="input"
-                    type="text"
-                    {...register('title', { required: true })}
-                />
-                {errors.title && <p className="error">Title is required</p>}
-            </div>
-            <div className="control">
-                <label className="label">Help text</label>
-                <input
-                    className="input"
-                    type="text"
-                    {...register('helpText')}
-                />
-            </div>
-            <div className="control">
-                <label className="label">Answer type</label>
-                <div className="select">
-                    <select {...register('fieldType')}>
-                        {Object.keys(fieldTypeMapping).map((key) => (
-                            <option key={key} value={fieldTypeMapping[key]}>
-                                {key}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-            {(fieldType === 'string_radio' || fieldType === 'checkbox') && (
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="field is-grouped is-grouped-multiline">
                 <div className="control">
-                    <label className="label">Options (comma separated)</label>
+                    <label className="label">Question title</label>
                     <input
                         className="input"
                         type="text"
-                        placeholder="Options"
-                        {...register('options', { required: true })}
+                        {...register('title', { required: true })}
                     />
-                    {errors.options && (
-                        <p className="error">Options are required</p>
-                    )}
+                    {errors.title && <p className="error">Title is required</p>}
                 </div>
-            )}
-            <div className="control">
-                <label className="label">Required</label>
-                <div className="select">
-                    <select {...register('required')}>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
-                    </select>
+                <div className="control">
+                    <label className="label">Help text</label>
+                    <input
+                        className="input"
+                        type="text"
+                        {...register('helpText')}
+                    />
+                </div>
+                <div className="control">
+                    <label className="label">Answer type</label>
+                    <div className="select">
+                        <select {...register('fieldType')}>
+                            {Object.keys(fieldTypeMapping).map((key) => (
+                                <option key={key} value={fieldTypeMapping[key]}>
+                                    {key}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                {(fieldType === 'string_radio' || fieldType === 'checkbox') && (
+                    <div className="control">
+                        <label className="label">
+                            Options (comma separated)
+                        </label>
+                        <input
+                            className="input"
+                            type="text"
+                            placeholder="Options"
+                            {...register('options', { required: true })}
+                        />
+                        {errors.options && (
+                            <p className="error">Options are required</p>
+                        )}
+                    </div>
+                )}
+                <div className="control">
+                    <label className="label">Required</label>
+                    <div className="select">
+                        <select {...register('required')}>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div
+                    className="control has-text-centered"
+                    style={{ alignSelf: 'flex-end' }}
+                >
+                    <button className="button is-primary" type="submit">
+                        Add Field
+                    </button>
                 </div>
             </div>
-            <div
-                className="control has-text-centered"
-                style={{ alignSelf: 'flex-end' }}
-            >
-                <button className="button is-primary" type="submit">
-                    Add Field
-                </button>
+            <div className="control">
+                <label className="label">Question description</label>
+                <textarea className="textarea" {...register('description')} />
             </div>
         </form>
     );

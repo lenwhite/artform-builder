@@ -13,30 +13,37 @@ const FormBuilder: React.FC = () => {
     return (
         <div className="container">
             <h1 className="title">Artform Builder</h1>
-            <div className="field">
-                <label className="label" htmlFor="formTitle">
-                    Form Title:
-                </label>
-                <div className="control">
-                    <input
-                        className="input"
-                        id="formTitle"
-                        value={formTitle}
-                        onChange={(e) => setFormTitle(e.target.value)}
-                    />
-                </div>
-            </div>
-            <div className="field">
-                <label className="label" htmlFor="formDescription">
-                    Form Description:
-                </label>
-                <div className="control">
-                    <textarea
-                        className="textarea"
-                        id="formDescription"
-                        value={formDescription}
-                        onChange={(e) => setFormDescription(e.target.value)}
-                    />
+            <div className="card">
+                <div className="card-content">
+                    <div className="content">
+                        <div className="field"></div>
+                        <label className="label" htmlFor="formTitle">
+                            Form Title:
+                        </label>
+                        <div className="control">
+                            <input
+                                className="input"
+                                id="formTitle"
+                                value={formTitle}
+                                onChange={(e) => setFormTitle(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="field">
+                        <label className="label" htmlFor="formDescription">
+                            Form Description:
+                        </label>
+                        <div className="control">
+                            <textarea
+                                className="textarea"
+                                id="formDescription"
+                                value={formDescription}
+                                onChange={(e) =>
+                                    setFormDescription(e.target.value)
+                                }
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
             <FieldsPreview />

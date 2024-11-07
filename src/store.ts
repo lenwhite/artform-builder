@@ -21,6 +21,7 @@ export type Field = {
     enum?: (string | number)[];
     enumNames?: string[];
     helpText?: string;
+    description?: string;
 };
 
 export type FormBuilderStore = {
@@ -29,7 +30,7 @@ export type FormBuilderStore = {
     fields: Field[];
     setFormTitle: (title: string) => void;
     setFormDescription: (description: string) => void;
-    addField: (field: Field) => void;
+    addField: (field: Omit<Field, 'order'>) => void;
     removeField: (fieldIndex: number) => void;
     moveField: (fromIndex: number, toIndex: number) => void;
 };
@@ -41,7 +42,16 @@ export const useFormBuilderStore = create<FormBuilderStore>()((set) => ({
     setFormTitle: (title) => set(() => ({ formTitle: title })),
     setFormDescription: (description) =>
         set(() => ({ formDescription: description })),
-    addField: (field) => set((state) => ({ fields: [...state.fields, field] })),
+    addField: (field) =>
+        set((state) => ({
+            fields: [
+                ...state.fields,
+                {
+                    ...field,
+                    order: Math.max(...state.fields.map((f) => f.order), 0) + 1,
+                },
+            ],
+        })),
     removeField: (fieldIndex) =>
         set((state) => ({
             fields: state.fields.filter((_, index) => index !== fieldIndex),
