@@ -76,10 +76,10 @@ export const AddFieldRow = () => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="fixed-grid has-5-cols"
+            className="fixed-grid has-6-cols"
         >
             <div className="grid">
-                <div className="cell control">
+                <div className="cell control is-col-span-2">
                     <label className="label">Question title</label>
                     <input
                         className="input"
@@ -89,7 +89,7 @@ export const AddFieldRow = () => {
                     {errors.title && <p className="error">Title is required</p>}
                 </div>
                 <div className="cell control">
-                    <label className="label">Help text</label>
+                    <label className="label">Help text / subtitle</label>
                     <input
                         className="input"
                         type="text"
@@ -108,8 +108,26 @@ export const AddFieldRow = () => {
                         </select>
                     </div>
                 </div>
+
+                <div className="cell control">
+                    <label className="label">Required</label>
+                    <div className="select is-fullwidth">
+                        <select {...register('required')}>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="cell control" style={{ alignSelf: 'flex-end' }}>
+                    <button
+                        className="button is-primary is-fullwidth"
+                        type="submit"
+                    >
+                        Add Field
+                    </button>
+                </div>
                 {(fieldType === 'string_radio' || fieldType === 'checkbox') && (
-                    <div className="cell control">
+                    <div className="cell control is-col-span-5">
                         <label className="label">
                             Options (comma separated)
                         </label>
@@ -124,27 +142,7 @@ export const AddFieldRow = () => {
                         )}
                     </div>
                 )}
-                <div className="cell control">
-                    <label className="label">Required</label>
-                    <div className="select is-fullwidth">
-                        <select {...register('required')}>
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
-                        </select>
-                    </div>
-                </div>
-                <div
-                    className="cell control has-text-right"
-                    style={{ alignSelf: 'flex-end' }}
-                >
-                    <button
-                        className="button is-primary is-fullwidth"
-                        type="submit"
-                    >
-                        Add Field
-                    </button>
-                </div>
-                <div className="cell is-row-span-2 is-col-span-4 control">
+                <div className="cell is-row-span-2 is-col-span-5 control">
                     <label className="label">Question description</label>
                     <textarea
                         className="textarea"
